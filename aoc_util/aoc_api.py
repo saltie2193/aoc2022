@@ -1,12 +1,12 @@
 import os
 import re
-from enum import Enum, auto
+from enum import IntEnum, auto
 from typing import Optional, Tuple
 
-import requests as requests
+import requests
 
 
-class SubmitResult(Enum):
+class SubmitResult(IntEnum):
     TOO_QUICK = auto()
     WRONG = auto()
     RIGHT = auto()
@@ -53,7 +53,9 @@ class AOC_API:
                 file.write(res)
             return res
 
-    def _post_answer(self, year: int, day: int, part: int, answer: str) -> requests.Response:
+    def _post_answer(
+        self, year: int, day: int, part: int, answer: str
+    ) -> requests.Response:
         url = f"{self._get_base_url(year, day)}/answer"
         payload = dict(level=part, answer=answer)
 
@@ -64,7 +66,10 @@ class AOC_API:
     ) -> Tuple[SubmitResult, Optional[int]]:
         contents = self._post_answer(year, day, part, answer)
 
-        for error_regex, ret in zip((WRONG, TOO_QUICK, ALREADY_DONE), (SubmitResult.WRONG, SubmitResult.TOO_QUICK, SubmitResult.ALREADY_DONE)):
+        for error_regex, ret in zip(
+            (WRONG, TOO_QUICK, ALREADY_DONE),
+            (SubmitResult.WRONG, SubmitResult.TOO_QUICK, SubmitResult.ALREADY_DONE),
+        ):
             error_match = error_regex.search(contents.text)
             if error_match:
                 return (ret, None)
