@@ -1,0 +1,4 @@
+-e aoc_util
+requests
+pytest
+python-dotenv
