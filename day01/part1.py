@@ -1,6 +1,6 @@
 import os
 
-from aoc_api import AOC_API
+from aoc import AOC
 from dotenv import load_dotenv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -16,19 +16,16 @@ def compute(input_str: str) -> str:
 
 def test() -> None:
     input_s = ""
-    with open(f"{HERE}/test.txt") as file:
+    with open(f"{HERE}/test.txt", encoding="utf-8") as file:
         input_s = file.read()
     assert compute(input_s) == 2400
 
 
 def main():
-    aoc_api = AOC_API(API_TOKEN, HERE)
+    aoc = AOC(API_TOKEN, HERE)
     year, day, part = 2022, 1, 1
 
-    input_str: str = aoc_api.get_input(year, day)
-    answer = compute(input_str)
-    res = aoc_api.submit_solution(year, day, part, answer)
-    print(res)
+    aoc.run_part(year, day, part, compute, auto_submit=True)
 
 
 if __name__ == "__main__":

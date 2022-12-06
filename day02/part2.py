@@ -1,6 +1,7 @@
 import os
 from typing import Tuple
 
+from aoc import AOC
 from aoc_api import AOC_API
 from dotenv import load_dotenv
 
@@ -87,14 +88,10 @@ C Z
 
 
 def main():
-    aoc_api = AOC_API(API_TOKEN, HERE)
+    aoc = AOC(API_TOKEN, HERE)
     year, day, part = 2022, 2, 2
 
-    input: str = aoc_api.get_input(year, day)
-    answer = compute(input)
-    print(answer)
-    res = aoc_api.submit_solution(year, day, part, answer)
-    print(res)
+    aoc.run_part(year, day, part, compute)
 
 
 if __name__ == "__main__":

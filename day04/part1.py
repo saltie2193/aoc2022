@@ -1,6 +1,6 @@
 import os
 
-from aoc_api import AOC_API
+from aoc import AOC
 from dotenv import load_dotenv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -33,14 +33,9 @@ def test() -> None:
 
 
 def main():
-    aoc_api = AOC_API(API_TOKEN, HERE)
+    aoc = AOC(API_TOKEN, HERE)
     year, day, part = 2022, 4, 1
-
-    input_str: str = aoc_api.get_input(year, day)
-    answer = compute(input_str)
-    print(answer)
-    res = aoc_api.submit_solution(year, day, part, answer)
-    print(res)
+    aoc.run_part(year, day, part, compute)
 
 
 if __name__ == "__main__":

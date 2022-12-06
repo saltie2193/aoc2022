@@ -1,7 +1,6 @@
 import os
 
-from aoc import get_year_day
-from aoc_api import AOC_API
+from aoc import AOC
 from dotenv import load_dotenv
 
 load_dotenv("../.venv")
@@ -25,13 +24,10 @@ def test() -> None:
 
 
 def main():
-    aoc_api = AOC_API(API_TOKEN, HERE)
-    (year, day) = get_year_day()
-    print(year, day)
+    aoc = AOC(API_TOKEN, HERE)
+    year, day, part = 2022, 1, 2
 
-    input_str: str = aoc_api.get_input(year, day)
-    res = compute(input_str)
-    print(res)
+    aoc.run_part(year, day, part, compute, auto_submit=True)
 
 
 if __name__ == "__main__":
