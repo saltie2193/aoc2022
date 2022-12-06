@@ -17,9 +17,22 @@ def compute(input_str: str) -> str:
 
 
 def test() -> None:
-    input_s = ""
-    with open(f"{HERE}/test.txt") as file:
-        input_s = file.read()
+    input_s = """\
+1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000
+"""
     assert compute(input_s) == 45000
 
 

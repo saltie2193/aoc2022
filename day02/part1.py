@@ -46,9 +46,8 @@ def calc_player(a: str, b: str) -> int:
 
 
 def calc_round(a: str, b: str) -> Tuple[int, int]:
-    _a = value_from_token[a]
-    _b = value_from_token[b]
-    # _b = abc_from_xyz[b]
+    # _a = abc_from_xyz[a]
+    _b = abc_from_xyz[b]
     return (calc_player(a, _b), calc_player(_b, a))
 
 

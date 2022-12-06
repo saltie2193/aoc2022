@@ -29,7 +29,7 @@ def test() -> None:
 6-6,4-6
 2-6,4-8
 """
-    assert compute(input_s) == 2
+    assert compute(input_s) == 4
 
 
 def main():

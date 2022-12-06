@@ -35,9 +35,7 @@ def gert_priority(c: str) -> int:
 
 def compute(input_str: str) -> str:
     commons = [get_common(line) for line in input_str.splitlines()]
-    print(commons)
     prios = list(map(gert_priority, commons))
-    print(prios)
     return sum(prios)
 
 
