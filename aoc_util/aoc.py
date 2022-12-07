@@ -146,7 +146,7 @@ def get_input(directory: str, year: int, day: int):
     if today < d:
         print(f"Skip getting input, {d} is in the future.")
         return
-    aoc_api = AOC_API(API_TOKEN, path_day)
+    aoc_api = AOC_API(API_TOKEN, directory)
     aoc_api.get_input(year, day)
 
 
@@ -204,23 +204,32 @@ def init_day_auto(directory: str) -> None:
         Returns:
             None
     """
-    if not os.path.exists(os.path.join(directory, "day00")):
+    try:
+        year = get_year(directory)
+        day = None
+        path_2_year = directory
+    except AssertionError:
+        year, day = get_year_day(directory)
+        path_2_year = os.path.dirname(directory)
+        init_day(path_2_year, year, day)
+        return
+
+    if not os.path.exists(os.path.join(path_2_year, "day00")):
         print("Folder 'day00' does not exist, are you in the right directory?")
         return
 
     day_today = date.today().day
-    path_tody = os.path.join(directory, f"day{day_today:0>2}")
-    print(path_tody)
-    if not os.path.exists(path_tody):
+    path_2_tody = os.path.join(path_2_year, f"day{day_today:0>2}")
+    if not os.path.exists(path_2_tody):
         print(f"Init current day {day_today}")
-        init_day(directory, get_year(directory), day_today)
+        init_day(path_2_year, get_year(path_2_year), day_today)
         return
 
     re_day = re.compile(r"^day([0-9]{2})$")
     days = []
 
-    for file in os.listdir(directory):
-        p = os.path.join(directory, file)
+    for file in os.listdir(path_2_year):
+        p = os.path.join(path_2_year, file)
         if not os.path.isdir(p):
             continue
 
@@ -231,10 +240,10 @@ def init_day_auto(directory: str) -> None:
     days.sort()
     for i, d in enumerate(days):
         if i != d:
-            init_day(directory, i)
+            init_day(path_2_year, year, i)
             return
 
-    init_day(directory, get_year(directory), len(days))
+    init_day(path_2_year, year, len(days))
     return
 
 

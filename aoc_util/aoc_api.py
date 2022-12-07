@@ -14,8 +14,8 @@ class SubmitResult(IntEnum):
     UNEXPECTED = auto()
 
 
-TOO_QUICK = re.compile("You gave an answer too recently.*to wait.")
-WRONG = re.compile(r"That's not the right answer.*?\.")
+TOO_QUICK = re.compile(r"You gave an answer too recently.*to wait\.")
+WRONG = re.compile(r"That's not the right answer.*?.")
 RIGHT = "That's the right answer!"
 ALREADY_DONE = re.compile(r"You don't seem to be solving.*\?")
 
@@ -36,20 +36,19 @@ class AOC_API:
 
     def _get_input(self, year: int, day: int) -> str:
         url = f"{self._get_base_url(year, day)}/input"
-        print(url)
-        res = requests.get(url, cookies=self._get_cookies())
+        res = requests.get(url, cookies=self._get_cookies(), timeout=5)
         return res.text
 
     def get_input(self, year: int, day: int) -> str:
+        print(self.cache_dir)
         res: str
-
         path_to_file = f"{self.cache_dir}/input.txt"
         if os.path.exists(path_to_file):
-            with open(path_to_file, "r") as file:
+            with open(path_to_file, "r", encoding="utf-8") as file:
                 return file.read()
         else:
             res = self._get_input(year, day)
-            with open(path_to_file, "w") as file:
+            with open(path_to_file, "w", encoding="utf-8") as file:
                 file.write(res)
             return res
 
@@ -59,7 +58,7 @@ class AOC_API:
         url = f"{self._get_base_url(year, day)}/answer"
         payload = dict(level=part, answer=answer)
 
-        return requests.post(url, payload, cookies=self._get_cookies())
+        return requests.post(url, payload, cookies=self._get_cookies(), timeout=5)
 
     def submit_solution(
         self, year: int, day: int, part: int, answer: str

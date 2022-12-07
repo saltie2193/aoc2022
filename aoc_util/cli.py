@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from aoc import get_year, get_year_day, init_day, init_day_auto, run_day
+from aoc import get_input, get_year, get_year_day, init_day, init_day_auto, run_day
 
 
 def cli_init_day() -> None:
@@ -14,11 +14,16 @@ def cli_init_day() -> None:
     day = args.day
     cwd = os.getcwd()
     if args.download:
-        get_input(cwd, day)
+        if day is None:
+            year, day = get_year_day(cwd)
+        else:
+            year = get_year(cwd)
+        get_input(cwd, year, day)
         return
 
     if day:
         init_day(cwd, get_year(cwd), day, force=args.force)
+        return
 
     init_day_auto(cwd)
 
