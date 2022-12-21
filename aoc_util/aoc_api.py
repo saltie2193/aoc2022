@@ -21,10 +21,10 @@ ALREADY_DONE = re.compile(r"You don't seem to be solving.*\?")
 
 
 class AOC_API:
-    session_cookie: str
+    session_cookie: str | None
     cache_dir: str
 
-    def __init__(self, session_cookie: str, cache_dir: str) -> None:
+    def __init__(self, session_cookie: str | None, cache_dir: str) -> None:
         self.session_cookie = session_cookie
         self.cache_dir = cache_dir
 
@@ -32,6 +32,8 @@ class AOC_API:
         return f"https://adventofcode.com/{year}/day/{day}"
 
     def _get_cookies(self) -> dict[str, str]:
+        if self.session_cookie is None:
+            raise ValueError("Session cookie not set!")
         return dict(session=self.session_cookie)
 
     def _get_input(self, year: int, day: int) -> str:
@@ -39,10 +41,10 @@ class AOC_API:
         res = requests.get(url, cookies=self._get_cookies(), timeout=5)
         return res.text
 
-    def get_input(self, year: int, day: int) -> str:
-        print(self.cache_dir)
+    def get_input(self, year: int, day: int, test=False) -> str:
         res: str
-        path_to_file = f"{self.cache_dir}/input.txt"
+        file_name = "test" if test else "input"
+        path_to_file = f"{self.cache_dir}/{file_name}.txt"
         if os.path.exists(path_to_file):
             with open(path_to_file, "r", encoding="utf-8") as file:
                 return file.read()
@@ -73,10 +75,10 @@ class AOC_API:
             if error_match:
                 return (ret, None)
 
-        if RIGHT in contents:
+        if RIGHT in contents.text:
             print(f"\033[42m{RIGHT}\033[m")
             return (SubmitResult.RIGHT, None)
-        else:
-            # unexpected output?
-            print(contents.text)
-            return (SubmitResult.UNEXPECTED, None)
+
+        # unexpected output?
+        print(contents.text)
+        return (SubmitResult.UNEXPECTED, None)
