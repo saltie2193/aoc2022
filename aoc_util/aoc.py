@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import importlib.machinery
 import importlib.util
 import json
@@ -5,7 +7,7 @@ import os
 import re
 import shutil
 from datetime import date
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import pytest
 from aoc_api import AOC_API, SubmitResult
@@ -20,7 +22,7 @@ class AOC:
     _aoc_api: AOC_API
     _cache_dir: str
 
-    def __init__(self, session_cookie: str, cache_dir: str) -> None:
+    def __init__(self, session_cookie: str | None, cache_dir: str) -> None:
         self._aoc_api = AOC_API(session_cookie, cache_dir)
         self._cache_dir = cache_dir
 
@@ -83,10 +85,11 @@ class AOC:
         year: int,
         day: int,
         part: int,
-        compute: Callable[[str], str] = None,
+        compute: Callable[[str], str] | None = None,
         auto_submit=False,
+        test=False,
     ) -> None:
-        input_str = self._aoc_api.get_input(year, day)
+        input_str = self._aoc_api.get_input(year, day, test)
 
         if compute is None:
             print("Skip calculation of answer, 'compute' not provided.")
@@ -189,6 +192,7 @@ def init_day(directory: str, year: int, day: int, force=False) -> None:
         shutil.copy(file_s, file_d)
 
     get_input(dst, year, day)
+    print(f"https://adventofcode.com/{year}/day/{day}")
 
 
 def init_day_auto(directory: str) -> None:
