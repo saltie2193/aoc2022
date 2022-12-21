@@ -244,7 +244,17 @@ def init_day_auto(directory: str) -> None:
     return
 
 
-def run_day(directory: str, year: int, day: int, part: int, auto_submit: bool):
+def run_day(
+    directory: str,
+    year: int,
+    day: int,
+    part: int,
+    *,
+    auto_submit: bool,
+    test=False,
+    skip_pytest=False,
+    only_pytest=False,
+) -> None:
     print(f"Running: year {year}, day {day}, part {part}")
 
     path_day = os.path.join(directory, f"day{day:0>2}")
@@ -252,12 +262,19 @@ def run_day(directory: str, year: int, day: int, part: int, auto_submit: bool):
         print(f"Directory for day {day} does not exist.")
         return
 
-    print("Running tests...")
-
     path_module = os.path.join(path_day, f"part{part}.py")
-    retcode = pytest.main([path_module])
-    if retcode != pytest.ExitCode.OK:
-        print("Test did not succeed, aborting run")
+
+    if skip_pytest:
+        print("Skip pytests")
+    else:
+        print("Running tests...")
+        retcode = pytest.main([path_module])
+        if retcode != pytest.ExitCode.OK:
+            print("Test did not succeed, aborting run")
+            return
+
+    if only_pytest:
+        print("Skip run, only_pytest is set")
         return
 
     loader = importlib.machinery.SourceFileLoader("mymodule", path_module)
@@ -265,8 +282,13 @@ def run_day(directory: str, year: int, day: int, part: int, auto_submit: bool):
     module_part = importlib.util.module_from_spec(spec)
     loader.exec_module(module_part)
 
+    if test:
+        print("Using test.txt as input.")
+
     aoc = AOC(API_TOKEN, path_day)
-    aoc.run_part(year, day, part, module_part.compute, auto_submit)
+    aoc.run_part(
+        year, day, part, module_part.compute, auto_submit=auto_submit, test=test
+    )
 
 
 def get_year(path: str) -> int:

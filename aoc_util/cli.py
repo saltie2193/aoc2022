@@ -34,6 +34,9 @@ def cli_run_day() -> None:
     parser.add_argument("--part", type=int, choices=range(1, 3), default=1)
     parser.add_argument("--year", type=int)
     parser.add_argument("--submit", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--test", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--skip-pytest", action=argparse.BooleanOptionalAction)
+    parser.add_argument("--only-pytest", action=argparse.BooleanOptionalAction)
 
     args = parser.parse_args()
 
@@ -42,7 +45,7 @@ def cli_run_day() -> None:
 
     if year_a and day_a is None:
         print("Day needs to be provided if year is given")
-        return 1
+        return
     cwd = os.getcwd()
     if year_a and day_a:
         # check if we are already in the dayXX folder
@@ -58,7 +61,16 @@ def cli_run_day() -> None:
         path = cwd
         path = os.path.join(cwd, "..")
 
-    run_day(path, year, day, args.part, args.submit)
+    run_day(
+        path,
+        year,
+        day,
+        args.part,
+        auto_submit=args.submit,
+        test=args.test,
+        skip_pytest=args.skip_pytest,
+        only_pytest=args.only_pytest,
+    )
 
 
 def main():
