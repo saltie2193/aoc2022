@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 from aoc import AOC
@@ -13,7 +15,9 @@ def compute(input_str: str) -> str:
 
 
 def test() -> None:
-    input_s = ""
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+
     assert compute(input_s) == ""
 
 
