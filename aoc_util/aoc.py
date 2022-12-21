@@ -24,7 +24,7 @@ class AOC:
         self._aoc_api = AOC_API(session_cookie, cache_dir)
         self._cache_dir = cache_dir
 
-    def cache_answer(self, year: int, day: int, part: int, answer: int, res) -> None:
+    def cache_answer(self, year: int, day: int, part: int, answer: str, res) -> None:
         path = os.path.join(self._cache_dir, "aoc_cache.json")
 
         if not os.path.exists(path):
@@ -35,29 +35,26 @@ class AOC:
                 return
 
         with open(path, encoding="utf-8") as file:
-            cache: Dict = json.loads(file.read())
+            cache: dict = json.loads(file.read())
 
         k_year, k_day, k_part = str(year), str(day), str(part)
 
         _w = False
-        dict_year: Dict | None = cache.get(k_year)
-        if dict_year is None:
+        if k_year not in cache:
             cache[k_year] = {k_day: {k_part: {answer: res}}}
-
-        dict_day: Dict | None = dict_year.get(k_day)
-        if not _w and dict_day is None:
+        elif k_day not in cache[k_year]:
             cache[k_year][k_day] = {k_part: {answer: res}}
-
-        dict_part: Dict | None = dict_day.get(k_part)
-        if not _w and dict_part is None:
+        elif k_part not in cache[k_year][k_day]:
+            cache[k_year][k_day][k_part] = {answer: res}
+        else:
             cache[k_year][k_day][k_part][answer] = res
 
-        with open(path, encoding="utf-8") as file:
+        with open(path, "w", encoding="utf-8") as file:
             file.write(json.dumps(cache, default=str))
 
     def get_cached_answer(
         self, year: int, day: int, part: int, answer: str
-    ) -> Optional[SubmitResult]:
+    ) -> SubmitResult | None:
         # get json from file
         path = os.path.join(self._cache_dir, "aoc_cache.json")
 
@@ -65,17 +62,17 @@ class AOC:
             return None
 
         with open(path, encoding="utf-8") as file:
-            cache: Dict = json.load(file)
+            cache: dict = json.load(file)
 
-        dict_year: Dict | None = cache.get(str(year))
+        dict_year: dict | None = cache.get(str(year))
         if dict_year is None:
             return None
 
-        dict_day: Dict | None = dict_year.get(str(day))
+        dict_day: dict | None = dict_year.get(str(day))
         if dict_day is None:
             return None
 
-        dict_part: Dict | None = dict_day.get(str(part))
+        dict_part: dict | None = dict_day.get(str(part))
         if dict_part is None:
             return None
 
