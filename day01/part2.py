@@ -1,39 +1,30 @@
+"""
+Day 1: Calorie Counting - Part 2
+https://adventofcode.com/2022/day/1#part2
+"""
 import os
+import sys
 
 from aoc import AOC
 from dotenv import load_dotenv
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(HERE))
+from part1 import parse
+
 load_dotenv("../.venv")
 API_TOKEN = os.getenv("API_TOKEN")
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-
 
 def compute(input_str: str) -> str:
-    elfs = map(lambda elf: elf.splitlines(), input_str.split("\n\n"))
-    calories = list(map(lambda elf: sum([int(line) for line in elf]), elfs))
-    calories.sort(reverse=True)
-    return sum(calories[0:3])
+    calories = map(sum, parse(input_str))
+    return str(sum(sorted(calories, reverse=True)[0:3]))
 
 
 def test() -> None:
-    input_s = """\
-1000
-2000
-3000
-
-4000
-
-5000
-6000
-
-7000
-8000
-9000
-
-10000
-"""
-    assert compute(input_s) == 45000
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+    assert compute(input_s) == "45000"
 
 
 def main():

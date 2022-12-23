@@ -1,3 +1,9 @@
+"""
+Day 1: Calorie Counting - Part 1
+https://adventofcode.com/2022/day/1
+"""
+from __future__ import annotations
+
 import os
 
 from aoc import AOC
@@ -7,31 +13,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(HERE, "../.env"))
 API_TOKEN = os.getenv("API_TOKEN")
 
+Calories = int
+Elf = list[Calories]
+
+
+def parse(input_str: str) -> list[Elf]:
+    return [[int(line) for line in elf.splitlines()] for elf in input_str.split("\n\n")]
+
 
 def compute(input_str: str) -> str:
-    return max(
-        sum(int(line) for line in elf.splitlines()) for elf in input_str.split("\n\n")
-    )
+    return str(max(sum(elf) for elf in parse(input_str)))
 
 
 def test() -> None:
-    input_s = """\
-1000
-2000
-3000
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
 
-4000
-
-5000
-6000
-
-7000
-8000
-9000
-
-10000
-"""
-    assert compute(input_s) == 24000
+    assert compute(input_s) == "24000"
 
 
 def main():
