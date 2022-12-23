@@ -1,5 +1,8 @@
+"""
+Day 2: Rock Paper Scissors - Part 1
+https://adventofcode.com/2022/day/2
+"""
 import os
-from typing import Tuple
 
 from aoc import AOC
 from dotenv import load_dotenv
@@ -7,7 +10,6 @@ from dotenv import load_dotenv
 HERE = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(HERE, "../.env"))
 API_TOKEN = os.getenv("API_TOKEN")
-
 
 # A(1): Rock , B(2): Paper, C(3): Scissor
 #
@@ -45,16 +47,18 @@ def calc_player(a: str, b: str) -> int:
         return points
 
 
-def calc_round(a: str, b: str) -> Tuple[int, int]:
+def calc_round(a: str, b: str) -> tuple[int, int]:
     # _a = abc_from_xyz[a]
     _b = abc_from_xyz[b]
-    return (calc_player(a, _b), calc_player(_b, a))
+    return calc_player(a, _b), calc_player(_b, a)
 
 
 def compute(input_str: str) -> str:
-    return sum(
-        calc_round(a, b)[1]
-        for a, b in [line.split() for line in input_str.splitlines()]
+    return str(
+        sum(
+            calc_round(a, b)[1]
+            for a, b in [line.split() for line in input_str.splitlines()]
+        )
     )
 
 
@@ -76,12 +80,10 @@ def test_calc_player() -> None:
 
 
 def test() -> None:
-    input_s = """\
-A Y
-B X
-C Z
-"""
-    assert compute(input_s) == 15
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+
+    assert compute(input_s) == "15"
 
 
 def main():
