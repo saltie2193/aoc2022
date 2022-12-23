@@ -1,16 +1,25 @@
+"""
+Day 3: Rucksack Reorganization - Part 2
+https://adventofcode.com/2022/day/3#part2
+"""
+from __future__ import annotations
+
 import os
+import sys
 from functools import reduce
-from typing import List
 
 from aoc import AOC
 from dotenv import load_dotenv
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(HERE)
+from part1 import get_priority
+
 load_dotenv(os.path.join(HERE, "../.env"))
 API_TOKEN = os.getenv("API_TOKEN")
 
 
-def get_common_grp(rucksacks: List[str]) -> str:
+def get_common_grp(rucksacks: list[str]) -> str:
     found = {}
     for rucksack, match_local in zip(rucksacks, [{} for _ in range(len(rucksacks))]):
         for item in rucksack:
@@ -25,18 +34,10 @@ def get_common_grp(rucksacks: List[str]) -> str:
                     return item
 
 
-def get_priority(c: str) -> int:
-    value = ord(c)
-    if value >= 97:
-        return value - 96
-    if value >= 65:
-        return value - 38
-
-
 def compute(input_str: str) -> str:
     rucksacks = input_str.splitlines()
 
-    def reducer(acc: List[List[str]], item: List[str]) -> List[List[str]]:
+    def reducer(acc: list[list[str]], item: list[str]) -> list[list[str]]:
         if len(acc[-1]) >= 3:
             acc.append([item])
         else:
@@ -45,9 +46,8 @@ def compute(input_str: str) -> str:
 
     groups = reduce(reducer, rucksacks, [[]])
     # groups = reduce(lambda acc, r: acc.append(r) if len(acc[-1]) >= 3 else acc[-1].extend([r]),rucksacks,  [[]])
-    badges = [get_common_grp(group) for group in groups]
-    prios = list(map(get_priority, badges))
-    return sum(prios)
+    prios = list(map(get_priority, map(get_common_grp, groups)))
+    return str(sum(prios))
 
 
 def test_get_common_grp() -> None:
@@ -71,15 +71,10 @@ def test_get_common_grp() -> None:
 
 
 def test() -> None:
-    input_s = """\
-vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw
-"""
-    assert compute(input_s) == 70
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+
+    assert compute(input_s) == "70"
 
 
 def main():

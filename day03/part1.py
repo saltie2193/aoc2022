@@ -1,3 +1,7 @@
+"""
+Day 3: Rucksack Reorganization - Part 1
+https://adventofcode.com/2022/day/3
+"""
 import os
 
 from aoc import AOC
@@ -25,7 +29,7 @@ def get_common(input_str: str) -> str:
         in_b[_b] = True
 
 
-def gert_priority(c: str) -> int:
+def get_priority(c: str) -> int:
     value = ord(c)
     if value >= 97:
         return value - 96
@@ -34,21 +38,15 @@ def gert_priority(c: str) -> int:
 
 
 def compute(input_str: str) -> str:
-    commons = [get_common(line) for line in input_str.splitlines()]
-    prios = list(map(gert_priority, commons))
-    return sum(prios)
+    commons = map(get_common, input_str.splitlines())
+    return str(sum(map(get_priority, commons)))
 
 
 def test() -> None:
-    input_s = """\
-vJrwpWtwJgWrhcsFMMfFFhFp
-jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-PmmdzqPrVvPwwTWBwg
-wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-ttgJtRGJQctTZtZT
-CrZsJsPPZsGzwwsLwLmpwMDw
-"""
-    assert compute(input_s) == 157
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+
+    assert compute(input_s) == "157"
 
 
 def main():
