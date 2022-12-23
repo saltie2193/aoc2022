@@ -1,3 +1,7 @@
+"""
+Day 4: Camp Cleanup - Part 2
+https://adventofcode.com/2022/day/4#part2
+"""
 import os
 
 from aoc import AOC
@@ -12,24 +16,18 @@ def compute(input_str: str) -> str:
     count = 0
     for line in input_str.splitlines():
         r0, r1 = [(int(a), int(b)) for a, b in [r.split("-") for r in line.split(",")]]
-        if r0[0] <= r1[1] and r0[1] >= r1[1]:
+        if r0[0] <= r1[1] <= r0[1]:
             count += 1
-        elif r1[0] <= r0[1] and r1[1] >= r0[1]:
+        elif r1[0] <= r0[1] <= r1[1]:
             count += 1
 
-    return count
+    return str(count)
 
 
 def test() -> None:
-    input_s = """\
-2-4,6-8
-2-3,4-5
-5-7,7-9
-2-8,3-7
-6-6,4-6
-2-6,4-8
-"""
-    assert compute(input_s) == 4
+    with open(os.path.join(HERE, "test.txt"), encoding="utf-8") as file:
+        input_s = file.read()
+    assert compute(input_s) == "4"
 
 
 def main():
