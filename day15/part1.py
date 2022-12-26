@@ -5,15 +5,11 @@ import os
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-from aoc import AOC
+from aoc_tools import manhattan_dist
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(HERE, "../.env"))
 API_TOKEN = os.getenv("API_TOKEN")
-
-
-def manhattan_distance(a: tuple[int, int], b: tuple[int, int]) -> int:
-    return sum(abs(_a - _b) for _a, _b in zip(a, b))
 
 
 def get_row_coverage(
@@ -21,7 +17,7 @@ def get_row_coverage(
 ) -> tuple[int, int] | None:
     (x, y) = sensor[:2]
     beacon = sensor[2:]
-    dist = manhattan_distance((x, y), beacon)
+    dist = manhattan_dist((x, y), beacon)
     dist_row = abs(x - row)
 
     if dist_row > dist:
@@ -34,7 +30,7 @@ def get_coverage_edge(sensor: tuple[int, int, int, int]) -> set[tuple[int, int]]
     (x, y) = sensor[:2]
     beacon = sensor[2:]
 
-    dist = manhattan_distance((x, y), beacon)
+    dist = manhattan_dist((x, y), beacon)
     print(dist)
     coverage = set()
 
@@ -93,21 +89,6 @@ def test() -> None:
         input_s = file.read()
 
     assert compute(input_s) == "1"
-
-
-def test_manhatten0() -> None:
-    ins = [(0, 0), (0, 1), (1, 0), (1, 1)]
-
-    for i in ins:
-        assert manhattan_distance(i, i) == 0
-
-
-def test_manhatten() -> None:
-    ins = [((0, 0), (0, 1)), ((0, 0), (1, 0)), ((0, 0), (1, 1)), ((1, 1), (5, 4))]
-    outs = [1, 1, 2, 7]
-
-    for i, o in zip(ins, outs):
-        assert manhattan_distance(*i) == o
 
 
 def main():
