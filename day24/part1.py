@@ -28,7 +28,7 @@ DIRECTION_MAP = {RIGHT: (0, 1), DOWN: (1, 0), LEFT: (0, -1), UP: (0, -1)}
 
 
 def print_board(
-        position: Position, blizzards: Blizzards, maxs: tuple[int, int]
+    position: Position, blizzards: Blizzards, maxs: tuple[int, int]
 ) -> None:
     for i in range(maxs[0] + 1):
         row = []
@@ -79,7 +79,7 @@ def _move(direction: str, position: Position) -> Position:
 
 
 def move_blizzard(
-        position: Position, direction: str, max_row: int, max_col
+    position: Position, direction: str, max_row: int, max_col
 ) -> Position:
     if direction == SOLID:
         return position
@@ -121,41 +121,48 @@ def predict_weather_n(_initial: Blizzards, maxs: tuple[int, int]) -> Weather:
 
 
 def find_path_length(
-        position: Position,
-        target: Position,
-        weather: Weather,
-        cycle_length: int,
-        time_offset=0,
+    position: Position,
+    target: Position,
+    weather: Weather,
+    cycle_length: int,
+    time_offset=0,
 ) -> int:
+    max_row = max(blizzard[1] for blizzard in weather)
+    max_col = max(blizzard[2] for blizzard in weather)
     to_visit: deque[tuple[int, Position]] = deque()
     to_visit.append((0, position))
     visited: set[tuple[int, int, int]] = set()
     while to_visit:
         length, _position = to_visit.popleft()
         if _position == target:
-            # print(_path)
             return length
 
-        if (length % cycle_length, *_position) in visited:
-            # print(f"already visited: {_position}")
-            continue
-        visited.add((length % cycle_length, _position[0], _position[1]))
+        # visited.add(((time_offset + length) % cycle_length, _position[0], _position[1]))
 
         # get possible moves
         for direction in (0, 1), (1, 0), (0, 0), (0, -1), (-1, 0):
-            new_position: tuple[int, int] = tuple(map(operator.add, _position, direction))
+            new_position: tuple[int, int] = tuple(
+                map(operator.add, _position, direction)
+            )
             # tuple(p + o for p, o in zip(_position, direction))
             # new_position = _move(direction, _position)
 
             # blizzard at position
-            if (((time_offset + length + 1) % cycle_length), *new_position) in weather:
+            new_time_state = (
+                ((time_offset + length + 1) % cycle_length),
+                *new_position,
+            )
+            if new_time_state in weather:
                 continue
 
-            if new_position[0] < 0:
+            if new_position[0] < 0 or new_position[0] > max_row:
                 continue
-            to_visit.append(
-                (length + 1, new_position)
-            )
+
+            if new_time_state in visited:
+                continue
+
+            to_visit.append((length + 1, new_position))
+            visited.add(new_time_state)
 
     return math.inf
 
@@ -163,7 +170,7 @@ def find_path_length(
 def compute(input_str: str) -> str:
     start, end, blizzards, maxs = parse(input_str)
 
-    magic = (maxs[0] - 1) * (maxs[1] - 1)
+    magic = math.lcm((maxs[0] - 1), (maxs[1] - 1))
     print("predicting weather")
     weather = predict_weather_n(blizzards, maxs)
 
